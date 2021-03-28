@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+<!------ Include the above in your HEAD tag ---------->
+{% block title %}
+<title>Chat Room</title>
+{% endblock%}
+
+{% block content %}
+<center>
+<div style="height: 10px;"></div>
+<div style="font-size: 30px;">Bonjour <b id="user">{{user}},</b> Bienvenue sur le Chat</div><br/>
+
+<div style="display2: none;"><a id="date5"></a></div><br/>
+
+<div class="fieldset3" style="width: 70%; background: #CCC;">
+<div style="font-size: 30px;"><b>Envoyer un message</b></div><br/>
+
+<form class="form" action="" method="POST">
+<textarea class="input" type="text" name="messages4" id="myMessage" placeholder="Message*" rows=2 oninput="modifHauteurTextarea(this);" title="Veuillez renseigner ce champ." required></textarea><br/>
+<bc class="bouton" id="sendbutton" style="min-width: 30%;">Envoyer</bc><br/><br/>
+</form>
+</div><br/>
+
+<div class="fieldset3" style="background: #FFF;">
+<b>Messages</b><hr class="hr3"/>
+
+<ul id="messages" style="padding: 0px; margin: 0px; list-style: none;">
+{% for msg in messages %}
+
+{% if msg[1] == user %}
+<li style="padding-left: 10px; text-align: left;">
+
+<form action="" method="POST" style="display: inline-block;">
+<input type="text" class="input" name="repere233" id="repere233" maxlength="10" placeholder="Id pour modification ou suppression*" value="{{msg[0]}}" style="display: none;"/>
+<input class="bouton" name="valider32" id="deleteButton34" type="submit" onclick="return confirm('Confirmer la suppression?');" value="Supprimer" title="Suppression pour la ligne de Id={{msg[0]}}"/>
+</form> {{msg[0]}}, <b>Vous:</b> {{msg[2]}}<br/>
+<center><hr class="hr4" style="width: 95%;"/></center>
+</li>
+
+{% else %}
+<li style="padding-right: 10px; text-align: right;"><b>{{msg[1]}}:</b> {{msg[2]}}<br/>
+<center><hr class="hr4" style="width: 95%;"/></center>
+</li>
+
+{% endif %}
+{% endfor %}
+</ul><br/><br/>
+</div><br/>
+
+<div class="fieldset3" id="modSup" style="width: 70%; background: #CCC;">
+<div style="font-size: 30px;"><b>Modifier un message</b></div><br/>
+
+<form action="" method="POST">
+<textarea class="input" type="text" name="messages2" id="messages2" placeholder="Message*" rows=2 oninput="modifHauteurTextarea(this);" title="Veuillez renseigner ce champ." required></textarea><br/>
+<input type="text" class="input" name="repere2" id="repere2" maxlength="10" placeholder="Id pour modification*" required/><br/>
+
+<input class="bouton" id="updateButton" type="submit" name="valider32" name2="modifier2" onclick="return confirm('Confirmer la modification?');" value="Modifier" style="width: 30%;"/><br/><br/>
+</form>
+</div>
+
+<hr class="hr3"/>
+<div id="logout">
+<a href="/logout" class="bouton">Deconnexion</a>
+</div><br/>
+
+<script>
+function modifHauteurTextarea(input2)
+{
+input2.style.height = "auto";
+input2.style.height = input2.scrollHeight + "px";
+}
+</script>
+
+<script type="text/javascript">
+$(document).ready(function()
+{
+var socket = io.connect('http://127.0.0.1:5000');
+socket.on('message', function(msg)
+{ $('#messages').prepend('<li>' + msg + '</li>');
+/* { $('#messages').append('<li>' + msg + '</li>'); */
+console.log('Received message');
+});
+
+$('#sendbutton').on('click', function()
+{
+if($('#myMessage').val() == "")
+{ alert("Vide");
+}
+else
+{ socket.send($('#user').val(), $('#myMessage').val());
+$('#myMessage').val('');
+}
+});
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</center>
+{% endblock%}
+
